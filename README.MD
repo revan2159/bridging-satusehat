@@ -1,6 +1,6 @@
 ## Quick Start
 
-Create Organization
+Create or Update Organization
 
 ```php
 
@@ -22,6 +22,7 @@ public function create()
     $organization->addTelecom('email', 'sip'); //opsional
     $organization->addTelecom('phone', 'ab'); //opsional
     $organization->addTelecom('url', 'https://rsdiponegoroduasatu.com'); //opsional
+
     //Opsional
     $organization->addAddress([
         'line' => 'Jl. Diponegoro No. 21',
@@ -36,12 +37,19 @@ public function create()
         'village' => 'Klaten Tengah',
         'postalCode' => '12'
     ]);
+
     //Opsional
     $organization->setPartOf([
         'reference' => '018d53db-a178-71de-a8ca-666149009923',
         'display' => 'RSUD Dr. Soeroto Klaten'
     ]);
+
+    // For Create
     $organization = $organization->create();
+
+    // For Update
+    $organization = $organization->update('06829c7c-5b5e-4f45-9a5b-c5b0d641f4a8');
+
     //Json return
     return $organization;
 }
