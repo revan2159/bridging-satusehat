@@ -16,26 +16,25 @@ public function __construct(Organization $organization)
 public function create()
 {
     $organization = $this->organization;
-    $organization->addIdentifier('RAJAL'); //Wajib
+    $organization->addIdentifier('Unit Keperawatan'); //Wajib
     $organization->setActive(false); // Opsional
-    $organization->setName('Unit Rawat Jalan'); //wajib
-    $organization->addTelecom('email', 'sip'); //opsional
-    $organization->addTelecom('phone', 'ab'); //opsional
+    $organization->setName('Keperawatan RSU Diponegoro Klaten'); //wajib
+    $organization->addTelecom('email', 'cahya@gmail.com'); //opsional
+    $organization->addTelecom('phone', '0895422611029'); //opsional
     $organization->addTelecom('url', 'https://rsdiponegoroduasatu.com'); //opsional
 
     //Opsional
     $organization->addAddress([
         'line' => 'Jl. Diponegoro No. 21',
+        'country' => 'ID',
         'city' => [
-            'name' => 'Klaten',
-            'code' => '08954'
+            'name' => 'Kab. Klaten',
+            'code' => '3310'
         ],
-        'country' => 'Indonesia',
-        'district' => 'Klaten Tengah',
-        'postalCode' => '57412',
-        'province' => 'Jawa Tengah',
-        'village' => 'Klaten Tengah',
-        'postalCode' => '12'
+        'province' => '33',
+        'district' => '331024',
+        'village' => '3310242003',
+        'postalCode' => '57438'
     ]);
 
     //Opsional
@@ -43,6 +42,9 @@ public function create()
         'reference' => '018d53db-a178-71de-a8ca-666149009923',
         'display' => 'RSUD Dr. Soeroto Klaten'
     ]);
+
+    // Chack Json Data Sebelum Kirim
+    $organization = $organization->json();
 
     // For Create
     $organization = $organization->create();

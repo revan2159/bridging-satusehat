@@ -110,83 +110,7 @@ class Organization
                 ]
             ]
         ];
-
-        // $this->organization['address'] = [
-        //     [
-        //         "use" => "work",
-        //         "type" => "both",
-        //         "line" => [
-        //             $this->addLine()
-        //         ],
-        //         "city" => $this->addCity()->city,
-        //         "postalCode" => $this->addPostalCode('57438'),
-        //         "country" => "ID",
-        //         "extension" => [
-        //             [
-        //                 "url" => "http://hl7.org/fhir/StructureDefinition/geolocation",
-        //                 "extension" => [
-        //                     [
-        //                         "url" => "province",
-        //                         "valueCode" => $this->addProvince()
-        //                     ],
-        //                     [
-        //                         "url" => "city",
-        //                         "valueCode" => $this->addCity()->kode
-        //                     ],
-        //                     [
-        //                         "url" => "district",
-        //                         "valueCode" => $this->addDistrict()
-        //                     ],
-        //                     [
-        //                         "url" => "village",
-        //                         "valueCode" => $this->addVillage()
-        //                     ]
-        //                 ]
-        //             ]
-        //         ]
-        //     ]
-        // ];
     }
-
-    // public function addLine($line = null)
-    // {
-    //     $line = $line ?? 'Jl. Diponegoro No. 21';
-    //     return $line;
-    // }
-
-    // public function addProvince($kode = null)
-    // {
-    //     $kode = $kode ?? '33'; //jateng
-    //     return $kode;
-    // }
-
-    // public function addCity($city = null, $kode = null)
-    // {
-    //     $city = $city ?? 'Klaten';
-    //     $kode = $kode ?? '3310'; // kabupaten klaten
-    //     return (object) [
-    //         "city" => $city,
-    //         "kode" => $kode
-    //     ];
-    // }
-
-    // public function addDistrict($kode = null)
-    // {
-    //     $kode = $kode ?? '331024'; //kecamatan klaten utara
-    //     return $kode;
-    // }
-
-    // public function addVillage($kode = null)
-    // {
-    //     $kode = $kode ?? '3310242003'; //kelurahan klaten utara
-    //     return $kode;
-    // }
-
-    // public function addPostalCode($kode)
-    // {
-    //     return $kode;
-    // }
-
 
     public function setPartOf($setPartOf)
     {
@@ -225,12 +149,6 @@ class Organization
         }
         if (!array_key_exists('address', $this->organization)) {
             $this->addAddress();
-            // $this->addLine('Jl. Diponegoro No. 21 Klaten');
-            // $this->addProvince('33');
-            // $this->addCity('Klaten', '3310');
-            // $this->addDistrict('331024');
-            // $this->addVillage('3310242003');
-            // $this->addPostalCode('57438');
         }
         if (!array_key_exists('partOf', $this->organization)) {
             $this->setPartOf([]);
@@ -244,92 +162,8 @@ class Organization
         $endpoint = $this->endpoint->createOrganizationUrl();
         $data = $this->json();
         $response = $this->bridgeSatusehat->postRequest($endpoint, $data);
-        // $respon = [
-        //     "active" => true,
-        //     "address" => [
-        //         0 => [
-        //             "city" => "Klaten",
-        //             "country" => "ID",
-        //             "extension" => [
-        //                 0 => [
-        //                     "extension" => [
-        //                         0 => [
-        //                             "url" => "province",
-        //                             "valueCode" => "33"
-        //                         ],
-        //                         1 => [
-        //                             "url" => "city",
-        //                             "valueCode" => "3310"
-        //                         ],
-        //                         2 => [
-        //                             "url" => "district",
-        //                             "valueCode" => "331024"
-        //                         ],
-        //                         3 => [
-        //                             "url" => "village",
-        //                             "valueCode" => "3310242003"
-        //                         ]
-        //                     ],
-        //                     "url" => "http://hl7.org/fhir/StructureDefinition/geolocation"
-        //                 ]
-        //             ],
-        //             "line" => [
-        //                 0 => "Jl. Diponegoro No. 21"
-        //             ],
-        //             "postalCode" => "57438",
-        //             "type" => "both",
-        //             "use" => "work"
-        //         ]
-        //     ],
-        //     "id" => "06829c7c-5b5e-4f45-9a5b-c5b0d641f4a8",
-        //     "identifier" => [
-        //         0 => [
-        //             "system" => "http://sys-ids.kemkes.go.id/organization/168777d6-5547-4883-a850-5c35605adcbe",
-        //             "use" => "official",
-        //             "value" => "RAJAL"
-        //         ]
-        //     ],
-        //     "meta" => [
-        //         "lastUpdated" => "2024-01-30T12:14:04.751396+00:00",
-        //         "versionId" => "MTcwNjYxNjg0NDc1MTM5NjAwMA"
-        //     ],
-        //     "name" => "Rawat Jalan RSU Diponegoro Dua Satu Klaten",
-        //     "partOf" => [
-        //         "reference" => "Organization/168777d6-5547-4883-a850-5c35605adcbe"
-        //     ],
-        //     "resourceType" => "Organization",
-        //     "telecom" => [
-        //         0 => [
-        //             "system" => "email",
-        //             "use" => "work",
-        //             "value" => "rskbdiponegoro0@gmail.com"
-        //         ],
-        //         1 => [
-        //             "system" => "phone",
-        //             "use" => "work",
-        //             "value" => "0895422611029"
-        //         ],
-        //         2 => [
-        //             "system" => "url",
-        //             "use" => "work",
-        //             "value" => "https://rsudiponegoro21klaten.com"
-        //         ]
-        //     ],
-        //     "type" => [
-        //         0 => [
-        //             "coding" => [
-        //                 0 => [
-        //                     "code" => "dept",
-        //                     "display" => "Hospital Department",
-        //                     "system" => "http://terminology.hl7.org/CodeSystem/organization-type"
-        //                 ]
-        //             ]
-        //         ]
-        //     ]
-        // ];
         return $respone->convert($response);
     }
-
 
     public function update($id)
     {
@@ -341,14 +175,6 @@ class Organization
         $response = $this->bridgeSatusehat->putRequest($endpoint, $newdata);
         return $respone->convert($response);
     }
-
-    // public function show($id = null)
-    // {
-    //     $id = $id ?? $this->organizationId;
-    //     $endpoint = '/Organization/' . $id;
-    //     $response = $this->bridgeSatusehat->getRequest($endpoint);
-    //     return $this->show($response);
-    // }
 
     public function getPartOf($uuid = null)
     {
