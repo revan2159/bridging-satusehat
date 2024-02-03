@@ -25,11 +25,21 @@ class Organization
         "resourceType" => "Organization",
     ];
 
+    /**
+     * Untuk menambahkan status aktif organisasi
+     * @param boolean $active status aktif organisasi (true, false)
+     */
+
     public function setActive($active = null)
     {
         $active =  is_bool($active) ? $active : true;
         $this->organization['active'] = $active;
     }
+
+    /**
+     * Untuk menambahkan identifier organisasi
+     * @param string $identifier kode identifier organisasi 
+     */
 
     public function addIdentifier($identifier)
     {
@@ -39,6 +49,12 @@ class Organization
             "value" => $identifier
         ]];
     }
+
+    /**
+     * Untuk menambahkan tipe organisasi
+     * @param string $typekode kode tipe organisasi (dept, inst, team, etc)
+     * @param string $typename nama tipe organisasi (Hospital Department, Institution, Team, etc)
+     */
 
     public function setType($typekode = null, $typename = null)
     {
@@ -57,21 +73,47 @@ class Organization
         ];
     }
 
-    public function setName($name)
+    /**
+
+     * Untuk menambahkan nama organisasi
+     * @param string $name nama organisasi 
+     * 
+     */
+
+    public function setName($name): void
     {
         $this->organization['name'] = $name;
     }
 
-    public function addTelecom($key, $value, $use = null)
-    {
-        $use = $use ?? 'work';
+    /**
+     * Untuk menambahkan kontak organisasi
+     * @param array $value array yang berisi email, phone, url
+     * @param string $use tipe kontak (work, home, temp, old, mobile)
+     */
 
-        $this->organization['telecom'][] = [
-            "system" => $key,
-            "value" => $value,
-            "use" => $use
+    public function addTelecom(array $value, $use = 'work'): void
+    {
+        $defaultValues = [
+            'email' => 'rskbdiponegoro0@gmail.com',
+            'phone' => '0895422611029',
+            'url'   => 'https://rsdiponegoroduasatu.com',
         ];
+
+        foreach ($defaultValues as $key => $defaultValue) {
+            $val = array_key_exists($key, $value) ? $value[$key] : $defaultValue;
+
+            $this->organization['telecom'][] = [
+                'system' => $key,
+                'value'  => $val,
+                'use'    => $use,
+            ];
+        }
     }
+
+    /**
+     * Untuk menambahkan alamat organisasi
+     * @param array $value array yang berisi line, city, postalCode, country, province, city, district, village
+     */
 
     public function addAddress(array $value = null): void
     {
@@ -112,6 +154,11 @@ class Organization
         ];
     }
 
+    /**
+     * Untuk menambahkan bagian dari organisasi
+     * @param array $setPartOf array yang berisi reference dan display
+     */
+
     public function setPartOf($setPartOf)
     {
         $setPartid = $setPartOf['reference'] ?? null;
@@ -127,6 +174,12 @@ class Organization
         }
     }
 
+    /**
+     * Untuk mengubah data menjadi json 
+     * Biasanya digunakan untuk mengecek data yang akan dikirim
+     * @return string
+     */
+
     public function json()
     {
         if (!array_key_exists('active', $this->organization)) {
@@ -136,9 +189,7 @@ class Organization
             return 'Please use organization->addIdentifier(identifier_kode_name) to pass the data';
         }
         if (!array_key_exists('telecom', $this->organization)) {
-            $this->addTelecom('email', 'rskbdiponegoro0@gmail.com');
-            $this->addTelecom('phone', '0895422611029');
-            $this->addTelecom('url', 'https://rsdiponegoroduasatu.com');
+            $this->addTelecom([]);
         }
         if (!array_key_exists('type', $this->organization)) {
             $this->setType();
@@ -153,10 +204,15 @@ class Organization
         if (!array_key_exists('partOf', $this->organization)) {
             $this->setPartOf([]);
         }
+
         return json_encode($this->organization, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
     }
 
-    public function create()
+    /**
+     * Untuk membuat data organisasi
+     * @return array
+     */
+    public function create(): array
     {
         $respone = new ResponseOrganization;
         $endpoint = $this->endpoint->createOrganizationUrl();
@@ -165,7 +221,13 @@ class Organization
         return $respone->convert($response);
     }
 
-    public function update($id)
+    /**
+     * Untuk mengupdate data organisasi
+     * @param string $id id organisasi
+     * @return array
+     */
+
+    public function update($id): array
     {
         $respone = new ResponseOrganization;
         $datJson = json_decode($this->json(), true);
@@ -176,7 +238,13 @@ class Organization
         return $respone->convert($response);
     }
 
-    public function getPartOf($uuid = null)
+    /**
+     * Untuk mendapatkan data organisasi
+     * @param string $uuid id organisasi
+     * @return array
+     */
+
+    public function getPartOf($uuid = null): array
     {
         $respone = new ResponseOrganization;
         $uuid = $uuid ?? $this->organizationId;
@@ -185,7 +253,13 @@ class Organization
         return $respone->getPartOf($response);
     }
 
-    public function getName($name = null)
+    /**
+     * Untuk mendapatkan data organisasi berdasarkan nama
+     * @param string $name nama organisasi
+     * @return array
+     */
+
+    public function getName($name = null): array
     {
         $respone = new ResponseOrganization;
         $name = $name ?? $this->organizationId;
@@ -194,7 +268,13 @@ class Organization
         return $respone->getName($response);
     }
 
-    public function getId($uuid = null)
+    /**
+     * Untuk mendapatkan data organisasi berdasarkan id
+     * @param string $uuid id organisasi
+     * @return array
+     */
+
+    public function getId($uuid = null): array
     {
         $respone = new ResponseOrganization;
         $uuid = $uuid ?? $this->organizationId;

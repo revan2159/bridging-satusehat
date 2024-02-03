@@ -19,9 +19,12 @@ public function create()
     $organization->addIdentifier('Unit Keperawatan'); //Wajib
     $organization->setActive(false); // Opsional
     $organization->setName('Keperawatan RSU Diponegoro Klaten'); //wajib
-    $organization->addTelecom('email', 'cahya@gmail.com'); //opsional
-    $organization->addTelecom('phone', '0895422611029'); //opsional
-    $organization->addTelecom('url', 'https://rsdiponegoroduasatu.com'); //opsional
+    // Opsional
+    $organization->addTelecom([
+            'email' => 'rskbdiponegoro0@gmail.com',
+            'phone' => '0895422611029',
+            'url' => 'https://rsdiponegoroduasatu.com'
+        ], 'work');
 
     //Opsional
     $organization->addAddress([
