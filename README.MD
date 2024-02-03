@@ -46,3 +46,24 @@ public function create()
     return $organization;
 }
 ```
+
+Organization by Name
+
+```php
+    $organization = $this->organization;
+    $cari = $organization->getName('Putut'); //Json return
+```
+
+Organization by ID
+
+```php
+    $organization = $this->organization;
+    $cari = $organization->getId('06829c7c-5b5e-4f45-9a5b-c5b0d641f4a8'); //Json return
+```
+
+Organization by PartOf
+
+```php
+    $organization = $this->organization;
+    $cari = $organization->getPartOf('06829c7c-5b5e-4f45-9a5b-c5b0d641f4a8'); //Json return
+```
