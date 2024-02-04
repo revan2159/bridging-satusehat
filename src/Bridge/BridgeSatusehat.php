@@ -48,10 +48,10 @@ class BridgeSatusehat extends CurlFactory
             return $result;
         } catch (\Throwable $th) {
             // Log or handle the exception according to your needs
-            return [
-                'error' => true,
-                'message' => $th->getMessage(),
-            ];
+            return json_encode([
+                'status' => false,
+                'message' => $th->getMessage()
+            ]);
         }
     }
 }

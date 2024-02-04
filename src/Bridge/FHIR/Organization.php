@@ -2,10 +2,11 @@
 
 namespace Rsudipodev\BridgingSatusehat\Bridge\FHIR;
 
+use Rsudipodev\BridgingSatusehat\Utility\Enpoint;
+use Rsudipodev\BridgingSatusehat\Utility\StrHelper;
 use Rsudipodev\BridgingSatusehat\Utility\Enviroment;
 use Rsudipodev\BridgingSatusehat\Bridge\BridgeSatusehat;
 use Rsudipodev\BridgingSatusehat\Bridge\Response\Organization as ResponseOrganization;
-use Rsudipodev\BridgingSatusehat\Utility\Enpoint;
 
 class Organization
 {
@@ -13,10 +14,10 @@ class Organization
     protected $bridgeSatusehat;
     protected $endpoint;
 
-    public function __construct(BridgeSatusehat $bridgeSatusehat)
+    public function __construct(BridgeSatusehat $bridgeSatusehat, Enpoint $endpoint)
     {
         $this->organizationId = Enviroment::organizationId();
-        $this->endpoint = new Enpoint;
+        $this->endpoint = $endpoint;
         $this->bridgeSatusehat = $bridgeSatusehat;
     }
 
@@ -82,7 +83,7 @@ class Organization
 
     public function setName($name): void
     {
-        $this->organization['name'] = $name;
+        $this->organization['name'] = StrHelper::getName($name);
     }
 
     /**
@@ -91,7 +92,7 @@ class Organization
      * @param string $use tipe kontak (work, home, temp, old, mobile)
      */
 
-    public function addTelecom(array $value, $use = 'work'): void
+    public function addTelecom(array $value = [], $use = 'work'): void
     {
         $defaultValues = [
             'email' => 'rskbdiponegoro0@gmail.com',
@@ -115,7 +116,7 @@ class Organization
      * @param array $value array yang berisi line, city, postalCode, country, province, city, district, village
      */
 
-    public function addAddress(array $value = null): void
+    public function addAddress(array $value = []): void
     {
         $this->organization['address'] = [
             [
@@ -159,7 +160,7 @@ class Organization
      * @param array $setPartOf array yang berisi reference dan display
      */
 
-    public function setPartOf($setPartOf)
+    public function setPartOf(array $setPartOf = [])
     {
         $setPartid = $setPartOf['reference'] ?? null;
         $display = $setPartOf['display'] ?? null;
@@ -180,7 +181,7 @@ class Organization
      * @return string
      */
 
-    public function json()
+    public function json(): string
     {
         if (!array_key_exists('active', $this->organization)) {
             $this->setActive();
