@@ -263,7 +263,7 @@ class Organization
     public function getName($name = null): array
     {
         $respone = new ResponseOrganization;
-        $name = $name ?? $this->organizationId;
+        $name = $name ?? 'Rumah Sakit Diponegoro';
         $endpoint = $this->endpoint->showOrganizationbyNameUrl($name);
         $response = $this->bridgeSatusehat->getRequest($endpoint);
         return $respone->getName($response);

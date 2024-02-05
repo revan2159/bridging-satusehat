@@ -92,8 +92,8 @@ class Location
 
     /**
      * Untuk menambahkan tipe lokasi
-     * @param string $typekode kode tipe lokasi (bu, wi, co, ro, ve, ho, ca, rd, area)
-     * ro = Room | co = Corridor | ve = Vehicle | ho = House | ca = Cabinet | rd = Road | area = Area
+     * @param string $typekode kode tipe lokasi bu | wi | co | ro | ve | ho | ca | rd | area
+     * bu = Building, wi = Wing, co = Corridor, ro = Room, ve = Vehicle, ho = House, ca = Cabinet, rd = Road, area = Area
      * Short description
      * Indicates the type of function performed at the location.
      * 
@@ -306,9 +306,25 @@ class Location
     {
         $respone = new ResponseLocation;
         $endpoint = $this->endpoint->createLocationUrl();
-        $data = $this->json();
-        $response = $this->bridgeSatusehat->postRequest($endpoint, $data);
-        dd($response);
+        $dataJson = $this->json();
+        $response = $this->bridgeSatusehat->postRequest($endpoint, $dataJson);
+        return $respone->convert($response);
+    }
+
+    /**
+     * Untuk mengupdate data lokasi
+     * @param string $id id lokasi
+     * @return array
+     */
+
+    public function update(string $id)
+    {
+        $respone = new ResponseLocation;
+        $endpoint = $this->endpoint->updateLocationUrl($id);
+        $dataJson = json_decode($this->json(), true);
+        $dataJson['id'] = $id;
+        $data = json_encode($dataJson, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+        $response = $this->bridgeSatusehat->putRequest($endpoint, $data);
         return $respone->convert($response);
     }
 }

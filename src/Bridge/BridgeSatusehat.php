@@ -47,11 +47,7 @@ class BridgeSatusehat extends CurlFactory
             $result = $this->request($endpoint, $method, $payload, $this->access_token);
             return $result;
         } catch (\Throwable $th) {
-            // Log or handle the exception according to your needs
-            return json_encode([
-                'status' => false,
-                'message' => $th->getMessage()
-            ]);
+            throw new \RuntimeException('Satusehat Error: ' . $th->getMessage());
         }
     }
 }

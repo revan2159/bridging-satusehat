@@ -80,3 +80,60 @@ Organization by PartOf
     $organization = $this->organization;
     $cari = $organization->getPartOf('06829c7c-5b5e-4f45-9a5b-c5b0d641f4a8'); //Json return
 ```
+
+Create or Update Location
+
+```php
+use Rsudipodev\BridgingSatusehat\Bridge\FHIR\Location;
+
+protected $location;
+
+public function __construct(Location $location)
+{
+    $this->location = $location;
+}
+
+public function location()
+{
+    $lokasi = $this->location;
+    $lokasi->addIdentifier('BU');
+    $lokasi->setName('Bedah Umum');
+    $lokasi->setActive('inactive');
+    $lokasi->addTelecom([
+        'email' => 'cahya@mail.com',
+        'phone' => '0895422611029',
+        'url' => 'https://rsdiponegoroduasatu.com'
+    ], 'work');
+    $lokasi->addAddress([
+        'line' => 'Jl. Diponegoro No. 21',
+        'country' => 'ID',
+        'city' => [
+            'name' => 'Kab. Klaten',
+            'code' => '3310'
+        ],
+        'province' => '33',
+        'district' => '331024',
+        'village' => '3310242003',
+        'postalCode' => '57438'
+    ]);
+    $lokasi->setManagingOrganization([
+        'reference' => '75738fc0-6677-4fdb-8560-8353ea1d0638',
+    ]);
+    $lokasi->addPosition([
+        'latitude' => '-7.7059',
+        'longitude' => '110.6069'
+    ]);
+    $lokasi->addPhysicalType('ro');
+
+    // Json Data Sebelum Kirim
+    $lokasi = $lokasi->json();
+
+    // For Create
+    $lokasi = $lokasi->create();
+
+    // For Update
+    $lokasi = $lokasi->update('c69adb9b-0189-4dcf-a8d8-619180bd0625');
+
+    return $lokasi;
+}
+```
