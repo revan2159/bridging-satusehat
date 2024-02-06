@@ -56,4 +56,17 @@ class Location
             'response' => $locationData
         ];
     }
+
+    public function getId($response): array
+    {
+        $data = json_decode($response, true);
+        $resType = $data['resourceType'];
+        if ($resType == 'Location') {
+            return [
+                'status'   => true,
+                'response' => $data
+            ];
+        }
+        return Error::checkOperationOutcome($resType, $data);
+    }
 }

@@ -327,4 +327,32 @@ class Location
         $response = $this->bridgeSatusehat->putRequest($endpoint, $data);
         return $respone->convert($response);
     }
+
+    /**
+     * Untuk mendapatkan data lokasi berdasarkan id
+     * @param string $uuid id lokasi
+     * @return array
+     */
+    public function getId(string $uuid): array
+    {
+        $respone = new ResponseLocation;
+        $endpoint = $this->endpoint->showLocationbyIdUrl($uuid);
+        $response = $this->bridgeSatusehat->getRequest($endpoint);
+        return $respone->getId($response);
+    }
+
+    /**
+     * Untuk mendapatkan data lokasi berdasarkan Organisasi ID
+     * @param string $uuid
+     * @return array
+     */
+
+    public function getPartOf(string $uuid)
+    {
+        $respone = new ResponseLocation;
+        $uuid = $uuid ?? $this->organizationId;
+        $endpoint = $this->endpoint->showLocationbyOrganizationIdUrl($uuid);
+        $response = $this->bridgeSatusehat->getRequest($endpoint);
+        return $response;
+    }
 }

@@ -77,6 +77,16 @@ class Enpoint
         return self::baseUrl('Location?organization=' . $ihsNumberOrganization);
     }
 
+    public static function showLocationbyIdUrl($ihsNumber)
+    {
+        return self::baseUrl('Location/' . $ihsNumber);
+    }
+
+    public static function showLocationbyOrganizationIdUrl($ihsNumberOrganization)
+    {
+        return self::baseUrl('Location?organization=' . $ihsNumberOrganization);
+    }
+
     public static function createLocationUrl()
     {
         return self::baseUrl('Location');
