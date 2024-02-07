@@ -347,12 +347,12 @@ class Location
      * @return array
      */
 
-    public function getPartOf(string $uuid)
+    public function getOrgId(string $uuid)
     {
         $respone = new ResponseLocation;
         $uuid = $uuid ?? $this->organizationId;
         $endpoint = $this->endpoint->showLocationbyOrganizationIdUrl($uuid);
         $response = $this->bridgeSatusehat->getRequest($endpoint);
-        return $response;
+        return $respone->getOrgId($response);
     }
 }
