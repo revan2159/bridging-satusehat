@@ -55,7 +55,6 @@ public function create()
     // For Update
     $organization = $organization->update('06829c7c-5b5e-4f45-9a5b-c5b0d641f4a8');
 
-    //Json return
     return $organization;
 }
 ```
@@ -136,4 +135,18 @@ public function location()
 
     return $lokasi;
 }
+```
+
+Location by ID
+
+```php
+    $lokasi = $this->location;
+    $hasil = $lokasi->getId('c69adb9b-0189-4dcf-a8d8-619180bd0625');
+```
+
+Location by OrgId
+
+```php
+    $lokasi = $this->location;
+    $hasil = $lokasi->getOrgId('c69adb9b-0189-4dcf-a8d8-619180bd0625');
 ```
