@@ -46,6 +46,11 @@ class Enpoint
         return self::baseUrl('Practitioner?identifier=https://fhir.kemkes.go.id/id/nik|' . $nik);
     }
 
+    public static function showPractitionerIdUrl($ihsNumber)
+    {
+        return self::baseUrl('Practitioner/' . $ihsNumber);
+    }
+
     public static function showOrganizationIdUrl($organizationId)
     {
         return self::baseUrl('Organization/' . $organizationId);

@@ -48,6 +48,10 @@ class BridgeSatusehat extends CurlFactory
             return $result;
         } catch (\Throwable $th) {
             throw new \RuntimeException('Satusehat Error: ' . $th->getMessage());
+            // return json_encode([
+            //     'status' => false,
+            //     'message' => 'Satusehat Error: ' . $th->getMessage()
+            // ], JSON_PRETTY_PRINT, JSON_UNESCAPED_SLASHES);
         }
     }
 }

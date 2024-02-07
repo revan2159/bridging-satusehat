@@ -4,7 +4,7 @@ namespace Rsudipodev\BridgingSatusehat\Bridge\Response;
 
 class Organization
 {
-    public function convert($response): array
+    public function convert(string $response): array
     {
         $data = json_decode($response, true);
 
@@ -24,25 +24,13 @@ class Organization
                 'postalCode' => $data['address'][0]['postalCode'],
                 'extension'  => [],
             ],
-            'contact'     => [],
+            'contact'     => $this->extractContactInfo($data),
             'partOf'      => $data['partOf']['reference'],
             'last_update' => $data['meta']['lastUpdated'],
         ];
 
-        foreach ($data['telecom'] as $telecomItem) {
-            $organizationData['contact'][] = [
-                'system' => $telecomItem['system'],
-                'value'  => $telecomItem['value'],
-                'use'    => $telecomItem['use']
-            ];
-        }
-
-        foreach ($data['address'][0]['extension'][0]['extension'] as $extensionItem) {
-            $organizationData['address']['extension'][] = [
-                'url'       => $extensionItem['url'],
-                'valueCode' => $extensionItem['valueCode']
-            ];
-        }
+        // Extract address extensions
+        $organizationData['address']['extension'] = $this->extractAddressExtensions($data);
 
         return [
             'status'   => true,
@@ -51,21 +39,20 @@ class Organization
         ];
     }
 
-
-    public function getId($response): array
+    public function getId(string $response): array
     {
         $data = json_decode($response, true);
         $resType = $data['resourceType'];
         if ($resType == 'Organization') {
             return [
-                'status' => true,
+                'status'   => true,
                 'response' => $data
             ];
         }
         return Error::checkOperationOutcome($resType, $data);
     }
 
-    public function getName($response): array
+    public function getName(string $response): array
     {
         $data = json_decode($response, true);
 
@@ -77,29 +64,16 @@ class Organization
         }
 
         $dataEntry = [];
-
         foreach ($data['entry'] as $item) {
             $resource = $item['resource'];
-
             if ($resource['resourceType'] === 'Organization') {
                 $organizationData = [
                     'active'      => $resource['active'],
                     'ihs_number'  => $resource['id'],
                     'name'        => $resource['name'],
-                    'contact'     => [],
+                    'contact'     => $this->extractContactInfo($resource),
                     'last_update' => $resource['meta']['lastUpdated'],
                 ];
-
-                // Check if 'telecom' key exists before trying to iterate
-                if (isset($resource['telecom']) && is_array($resource['telecom'])) {
-                    foreach ($resource['telecom'] as $telecomItem) {
-                        $organizationData['contact'][] = [
-                            'system' => $telecomItem['system'],
-                            'value'  => $telecomItem['value'],
-                            'use'    => $telecomItem['use']
-                        ];
-                    }
-                }
 
                 $dataEntry[] = $organizationData;
             }
@@ -112,21 +86,11 @@ class Organization
         ];
     }
 
-
-    public static function getPartOf($response): array
+    public function getPartOf(string $response): array
     {
         $responseData = json_decode($response, true);
 
-        if (Error::searchIsEmpty($responseData)) {
-            return [
-                'status'  => false,
-                'message' => 'Data tidak ditemukan!'
-            ];
-        }
-
-        $entry = $responseData['entry'] ?? [];
-
-        if (empty($entry)) {
+        if (Error::searchIsEmpty($responseData) || empty($responseData['entry'])) {
             return [
                 'status'  => false,
                 'message' => 'Data tidak ditemukan!'
@@ -134,30 +98,17 @@ class Organization
         }
 
         $dataEntry = [];
-
-        foreach ($entry as $item) {
+        foreach ($responseData['entry'] as $item) {
             $resource = $item['resource'];
-
             if ($resource['resourceType'] === 'Organization') {
                 $organizationData = [
                     'ihs_number'  => $resource['id'],
                     'name'        => $resource['name'],
                     'kode'        => $resource['identifier'][0]['value'],
                     'partOf'      => $resource['partOf']['reference'],
-                    'contact'     => [],
+                    'contact'     => $this->extractContactInfo($resource),
                     'last_update' => $resource['meta']['lastUpdated'],
                 ];
-
-                // Check if 'telecom' key exists before trying to iterate
-                if (isset($resource['telecom']) && is_array($resource['telecom'])) {
-                    foreach ($resource['telecom'] as $telecomItem) {
-                        $organizationData['contact'][] = [
-                            'system' => $telecomItem['system'],
-                            'value'  => $telecomItem['value'],
-                            'use'    => $telecomItem['use']
-                        ];
-                    }
-                }
 
                 $dataEntry[] = $organizationData;
             }
@@ -168,5 +119,34 @@ class Organization
             'total'    => count($dataEntry),
             'response' => $dataEntry
         ];
+    }
+
+    private function extractContactInfo(array $data): array
+    {
+        $contactInfo = [];
+        if (isset($data['telecom']) && is_array($data['telecom'])) {
+            foreach ($data['telecom'] as $telecomItem) {
+                $contactInfo[] = [
+                    'system' => $telecomItem['system'],
+                    'value'  => $telecomItem['value'],
+                    'use'    => $telecomItem['use']
+                ];
+            }
+        }
+        return $contactInfo;
+    }
+
+    private function extractAddressExtensions(array $data): array
+    {
+        $extensions = [];
+        if (isset($data['address'][0]['extension'][0]['extension'])) {
+            foreach ($data['address'][0]['extension'][0]['extension'] as $extensionItem) {
+                $extensions[] = [
+                    'url'       => $extensionItem['url'],
+                    'valueCode' => $extensionItem['valueCode']
+                ];
+            }
+        }
+        return $extensions;
     }
 }
