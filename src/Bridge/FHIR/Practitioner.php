@@ -2,10 +2,7 @@
 
 namespace Rsudipodev\BridgingSatusehat\Bridge\FHIR;
 
-use Bpjs\Bridging\Bridge;
 use Rsudipodev\BridgingSatusehat\Utility\Enpoint;
-use Rsudipodev\BridgingSatusehat\Utility\StrHelper;
-use Rsudipodev\BridgingSatusehat\Utility\Enviroment;
 use Rsudipodev\BridgingSatusehat\Bridge\BridgeSatusehat;
 use Rsudipodev\BridgingSatusehat\Bridge\Response\Practitioner as ResponsePractitioner;
 
