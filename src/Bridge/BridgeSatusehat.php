@@ -43,15 +43,7 @@ class BridgeSatusehat extends CurlFactory
 
     protected function makeRequest($endpoint, $method = "POST", $payload = "")
     {
-        try {
-            $result = $this->request($endpoint, $method, $payload, $this->access_token);
-            return $result;
-        } catch (\Throwable $th) {
-            throw new \RuntimeException('Satusehat Error: ' . $th->getMessage());
-            // return json_encode([
-            //     'status' => false,
-            //     'message' => 'Satusehat Error: ' . $th->getMessage()
-            // ], JSON_PRETTY_PRINT, JSON_UNESCAPED_SLASHES);
-        }
+        $result = $this->request($endpoint, $method, $payload, $this->access_token);
+        return $result;
     }
 }

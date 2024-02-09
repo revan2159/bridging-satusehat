@@ -2,8 +2,10 @@
 
 namespace Rsudipodev\BridgingSatusehat\Bridge\Response;
 
+
 class Location
 {
+
     public function convert($response): array
     {
         $data = json_decode($response, true);
@@ -11,30 +13,7 @@ class Location
             return Error::checkOperationOutcome($data['resourceType'], $data);
         }
 
-        $locationData = [
-            'status'      => $data['status'],
-            'ihs_number'  => $data['id'],
-            'identifier'  => $data['identifier'][0]['value'],
-            'name'        => $data['name'],
-            'description' => $data['description'],
-            'type'        => $data['physicalType']['coding'][0]['display'],
-            'type_code'   => $data['physicalType']['coding'][0]['code'],
-            'address'     => [
-                'city'       => $data['address']['city'],
-                'country'    => $data['address']['country'],
-                'line'       => $data['address']['line'][0],
-                'postalCode' => $data['address']['postalCode'],
-                'extension'  => [],
-            ],
-            'position'    => [
-                'latitude'  => $data['position']['latitude'],
-                'longitude' => $data['position']['longitude'],
-                'altitude'  => $data['position']['altitude']
-            ],
-            'contact'     => [],
-            'managingOrganization' => $data['managingOrganization']['reference'],
-            'last_update' => $data['meta']['lastUpdated'],
-        ];
+        $locationData = $this->extractLocationData($data);
 
         // Extract contact information
         $locationData['contact'] = array_map(function ($telecomItem) {
@@ -67,6 +46,7 @@ class Location
         if ($resType == 'Location') {
             return [
                 'status'   => true,
+                'message'  => 'success',
                 'response' => $data
             ];
         }
@@ -81,7 +61,8 @@ class Location
         if (empty($data['entry'])) {
             return [
                 'status'  => false,
-                'message' => 'Data tidak ditemukan!'
+                'error'   => 'not-found',
+                'message' => 'The reference provided was not found.'
             ];
         }
 
@@ -97,6 +78,7 @@ class Location
         if ($resType == 'Bundle') {
             return [
                 'status'   => true,
+                'message'  => 'success',
                 'total'    => count($locationData),
                 'response' => $locationData
             ];
@@ -129,18 +111,6 @@ class Location
             'contact'     => [],
             'managingOrganization' => $resource['managingOrganization']['reference'],
             'last_update' => $resource['meta']['lastUpdated'],
-        ];
-    }
-}
-
-class Error
-{
-    public static function checkOperationOutcome(string $resourceType, array $data): array
-    {
-        return [
-            'status'   => false,
-            'message'  => 'Error occurred for resource type: ' . $resourceType,
-            'response' => $data
         ];
     }
 }

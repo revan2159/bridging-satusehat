@@ -64,16 +64,17 @@ class CurlFactory
             $result = curl_exec($ch);
             $info = curl_getinfo($ch);
             $error = curl_error($ch);
+            // dd($result);
             // Check for cURL errors
             if ($error) {
                 throw new \RuntimeException('cURL error: ' . $error);
             }
 
-            // Check HTTP status code
-            $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            if ($httpStatusCode >= 400) {
-                throw new \RuntimeException('HTTP error: ' . $httpStatusCode);
-            }
+            // // Check HTTP status code
+            // $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            // if ($httpStatusCode >= 400) {
+            //     throw new \RuntimeException('HTTP error: ' . $httpStatusCode);
+            // }
 
             // Close cURL session
             curl_close($ch);

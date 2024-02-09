@@ -36,9 +36,24 @@ class Enpoint
         return self::authHost('accesstoken?grant_type=client_credentials');
     }
 
-    public static function patientUrl($nik)
+    public static function createPatientUrl()
+    {
+        return self::baseUrl('Patient');
+    }
+
+    public static function getPatientByNikUrl($nik)
     {
         return self::baseUrl('Patient?identifier=https://fhir.kemkes.go.id/id/nik|' . $nik);
+    }
+
+    public static function getPatientByNikIbuUrl($nik)
+    {
+        return self::baseUrl('Patient?identifier=https://fhir.kemkes.go.id/id/nik-ibu|' . $nik);
+    }
+
+    public static function showPatientIdUrl($ihsNumber)
+    {
+        return self::baseUrl('Patient/' . $ihsNumber);
     }
 
     public static function practitionerUrl($nik)

@@ -64,7 +64,7 @@ class Patient
      * "UNK" => "Unknown", // Tidak diketahui
      */
 
-    public function setMaritalStatus($maritalStatus = null)
+    public function setMaritalStatus(string $maritalStatus = null)
     {
         $maritalStatus =  is_string($maritalStatus) ? $maritalStatus : "M";
         $display = [
@@ -124,8 +124,10 @@ class Patient
     public function setName(string $name)
     {
         $this->Patient['name'] = [
-            "use" => "official",
-            "text" => $name
+            [
+                "use" => "official",
+                "text" => $name
+            ]
         ];
     }
 
@@ -183,7 +185,7 @@ class Patient
      */
     public function addAddress(array $value = [])
     {
-        $this->Patient['address'] = [
+        $this->Patient['address'][] = [
             "use" => "home",
             "line" => [
                 $value['line']
@@ -230,73 +232,243 @@ class Patient
      * @param array $value array kontak pasien
      */
 
-    private $contak = [
-        "type" => "C"
-
-    ];
-
-
-    public function addContact($contac)
+    public function addContact(array $contacts)
     {
         $this->Patient['contact'] = [];
 
-        foreach ($contac as $key => $value) {
-            $this->Patient['contact'][] = [
+        foreach ($contacts as $contactDetails) {
+            $telecoms = [];
+
+            if (isset($contactDetails['telecoms']) && is_array($contactDetails['telecoms'])) {
+                foreach ($contactDetails['telecoms'] as $telecom) {
+                    $telecoms[] = [
+                        "system" => $telecom['system'],
+                        "value" => $telecom['value'],
+                        "use" => $telecom['use']
+                    ];
+                }
+            }
+
+            $contact = [
                 "relationship" => [
                     [
                         "coding" => [
                             [
                                 "system" => "http://terminology.hl7.org/CodeSystem/v2-0131",
-                                "code" => $key
+                                "code" => $contactDetails['relationshipCode']
                             ]
                         ]
                     ]
                 ],
                 "name" => [
                     "use" => "official",
-                    "text" => $value['name']
+                    "text" => $contactDetails['name']
                 ],
-                "telecom" => []
+                "telecom" => $telecoms
             ];
-        }
 
-        foreach ($contac as $key => $value) {
-            if (array_key_exists('phone', $value)) {
-                $this->Patient['contact'][$key]['telecom'][] = [
-                    "system" => "phone",
-                    "value" => $value['phone'],
-                    "use" => $value['use']
-                ];
-            }
-            if (array_key_exists('email', $value)) {
-                $this->Patient['contact'][$key]['telecom'][] = [
-                    "system" => "email",
-                    "value" => $value['email'],
-                    "use" => $value['use']
-                ];
-            }
+            $this->Patient['contact'][] = $contact;
         }
     }
 
-
     /**
      * Untuk menambahkan nomor telepon pasien
-     * @param string $system jenis nomor telepon pasien
-     * @param string $value nomor telepon pasien
-     * @param string $use penggunaan nomor telepon pasien
-     * @example $system = "phone" | "fax" | "email" | "pager" | "url" | "sms" | "other"
-     * @example $use = "home" | "work" | "temp" | "old" | "mobile"
+     * @param array $Telecom array nomor telepon pasien
+     * @example $Telecom = ['phone' => '0895422611029', 'email' => 'cahya@mail.com']
+     * @param string $use tipe kontak (work, home, temp, old, mobile)
      */
 
-    public function addTelecom(string $system, string $value, string $use = null)
+    public function addTelecom(array $telecom, $use)
     {
-        $use = $use ?? 'home';
-        $this->Patient['telecom'] = [
-            [
-                "system" => $system,
+        foreach ($telecom as $key => $value) {
+            $this->Patient['telecom'][] = [
+                "system" => $key,
                 "value" => $value,
                 "use" => $use
+            ];
+        }
+    }
+
+    /**
+     * Untuk menambahkan bahasa komunikasi pasien
+     * @param string $language kode bahasa komunikasi pasien
+     * @example $language = "id-ID" | "en-US" | "zh-CN" | "ar-SA" | "ms-MY" | "en-SG"
+     */
+
+    public function setCommunication(string $language = null)
+    {
+        $language = $language ?? "id-ID";
+        $display = [
+            "id-ID" => "Indonesian",
+            "en-US" => "English",
+            "zh-CN" => "Chinese",
+            "ar-SA" => "Arabic",
+            "ms-MY" => "Malay",
+            "en-SG" => "Singapore",
+        ];
+
+        $this->Patient['communication'] = [
+            [
+                "language" => [
+                    "coding" => [
+                        [
+                            "system" => "urn:ietf:bcp:47",
+                            "code" => $language,
+                            "display" => $display[$language]
+                        ]
+                    ],
+                    "text" => $display[$language]
+                ],
+                "preferred" => true
             ]
         ];
+    }
+
+    /**
+     * Untuk menambahkan informasi tambahan pasien
+     * @param array $extension array informasi tambahan pasien
+     */
+
+    public function addExtension(array $extension)
+    {
+        $this->Patient['extension'] = [
+            [
+                "url" => "https://fhir.kemkes.go.id/r4/StructureDefinition/birthPlace",
+                "valueAddress" => [
+                    "city" => $extension['birthPlace']['city'],
+                    "country" => $extension['birthPlace']['country'],
+                ]
+            ],
+            [
+                "url" => "https://fhir.kemkes.go.id/r4/StructureDefinition/citizenshipStatus",
+                "valueCode" => $extension['citizenshipStatus']
+            ]
+        ];
+    }
+
+    // json build
+    public function json(): string
+    {
+
+        // identifier wajib
+        if (!array_key_exists('identifier', $this->Patient)) {
+            return throw new \RuntimeException('Identifier pasien wajib diisi, gunekan patient->addIdentifier()');
+        }
+
+        // name wajib
+        if (!array_key_exists('name', $this->Patient)) {
+            return throw new \RuntimeException('Nama pasien wajib diisi, gunakan patient->setName()');
+        }
+
+        // birthDate wajib
+        if (!array_key_exists('birthDate', $this->Patient)) {
+            return throw new \RuntimeException('Tanggal lahir pasien wajib diisi gunakan patient->setBirthDate()');
+        }
+
+        // gender wajib
+        if (!array_key_exists('gender', $this->Patient)) {
+            return throw new \RuntimeException('Jenis kelamin pasien wajib diisi gunakan patient->setGender()');
+        }
+
+        // address wajib
+        if (!array_key_exists('address', $this->Patient)) {
+            return throw new \RuntimeException('Alamat pasien wajib diisi gunakan patient->addAddress()');
+        }
+
+        // multipleBirthInteger wajib
+        // if (array_key_exists('multipleBirthBoolean', $this->Patient) && $this->Patient['multipleBirthBoolean'] == true) {
+        //     if (!array_key_exists('multipleBirthInteger', $this->Patient)) {
+        //         return throw new \RuntimeException('Urutan kelahiran pasien wajib diisi gunakan patient->setMultipleBirthInteger()');
+        //     }
+        // }
+        if (!array_key_exists('multipleBirthInteger', $this->Patient)) {
+            $this->setMultipleBirthInteger(0);
+        }
+
+        if (!array_key_exists('contact', $this->Patient)) {
+            $this->Patient['contact'] = [];
+        }
+
+        if (!array_key_exists('telecom', $this->Patient)) {
+            $this->Patient['telecom'] = [];
+        }
+
+        if (!array_key_exists('communication', $this->Patient)) {
+            $this->Patient['communication'] = [];
+        }
+
+        if (!array_key_exists('extension', $this->Patient)) {
+            $this->Patient['extension'] = [];
+        }
+
+        if (!array_key_exists('active', $this->Patient)) {
+            $this->setActive(false);
+        }
+
+        if (!array_key_exists('deceasedBoolean', $this->Patient)) {
+            $this->setDeceasedBoolean(false);
+        }
+
+        if (!array_key_exists('maritalStatus', $this->Patient)) {
+            $this->setMaritalStatus('S');
+        }
+
+        return json_encode($this->Patient, JSON_PRETTY_PRINT, JSON_UNESCAPED_SLASHES);
+    }
+
+    /**
+     * Untuk membuat data pasien
+     * @return array
+     */
+    public function create()
+    {
+        $respone = new ResponsePatient;
+        $endpoint = Enpoint::createPatientUrl();
+        $data = $this->json();
+        $response = $this->bridgeSatusehat->postRequest($endpoint, $data);
+        dd($response);
+        // return $respone->convert($response);
+    }
+
+    /**
+     * Untuk mengupdate data pasien
+     * @param string $id id pasien
+     * @return array
+     */
+    // public function update($id)
+    // {
+    //     $respone = new ResponsePatient;
+    //     $datJson = json_decode($this->json(), true);
+    //     $datJson['id'] = $id;
+    //     $newdata = json_encode($datJson, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+    //     $endpoint = Enpoint::updatePatientUrl($id);
+    //     $response = $this->bridgeSatusehat->putRequest($endpoint, $newdata);
+    //     return $respone->convert($response);
+    // }
+    // Patient by nik
+    public function getNik($nik)
+    {
+        $respone = new ResponsePatient;
+        $endpoint = Enpoint::getPatientByNikUrl($nik);
+        $response = $this->bridgeSatusehat->getRequest($endpoint);
+        return $respone->getNik($response);
+    }
+
+    // Patient by nik ibu
+    public function getNikIbu($nik)
+    {
+        $respone = new ResponsePatient;
+        $endpoint = Enpoint::getPatientByNikIbuUrl($nik);
+        $response = $this->bridgeSatusehat->getRequest($endpoint);
+        return $respone->getNikIbu($response);
+    }
+
+    // Patient by id
+    public function getId($id)
+    {
+        $respone = new ResponsePatient;
+        $endpoint = Enpoint::showPatientIdUrl($id);
+        $response = $this->bridgeSatusehat->getRequest($endpoint);
+        return $respone->getId($response);
     }
 }

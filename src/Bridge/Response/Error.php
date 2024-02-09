@@ -34,6 +34,7 @@ class Error
         if ($resType == 'OperationOutcome') {
             return [
                 'status' => false,
+                'error' => $data['issue'][0]['code'] ?? 'unknown_error',
                 'message' => $data['issue'][0]['details']['text'] ?? 'Unknown error!'
             ];
         }

@@ -46,6 +46,7 @@ class Organization
         if ($resType == 'Organization') {
             return [
                 'status'   => true,
+                'message'  => 'success',
                 'response' => $data
             ];
         }
@@ -59,7 +60,8 @@ class Organization
         if (empty($data['entry'])) {
             return [
                 'status'  => false,
-                'message' => 'Data tidak ditemukan!'
+                'error'   => 'not-found',
+                'message' => 'The reference provided was not found.'
             ];
         }
 
@@ -81,6 +83,7 @@ class Organization
 
         return [
             'status'   => true,
+            'message'  => 'success',
             'total'    => count($dataEntry),
             'response' => $dataEntry
         ];
@@ -93,7 +96,8 @@ class Organization
         if (Error::searchIsEmpty($responseData) || empty($responseData['entry'])) {
             return [
                 'status'  => false,
-                'message' => 'Data tidak ditemukan!'
+                'error'   => 'empty-result',
+                'message' => 'No data found.'
             ];
         }
 
@@ -116,6 +120,7 @@ class Organization
 
         return [
             'status'   => true,
+            'message'  => 'success',
             'total'    => count($dataEntry),
             'response' => $dataEntry
         ];
