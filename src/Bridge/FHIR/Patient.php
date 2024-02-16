@@ -375,12 +375,7 @@ class Patient
             return throw new \RuntimeException('Alamat pasien wajib diisi gunakan patient->addAddress()');
         }
 
-        // multipleBirthInteger wajib
-        // if (array_key_exists('multipleBirthBoolean', $this->Patient) && $this->Patient['multipleBirthBoolean'] == true) {
-        //     if (!array_key_exists('multipleBirthInteger', $this->Patient)) {
-        //         return throw new \RuntimeException('Urutan kelahiran pasien wajib diisi gunakan patient->setMultipleBirthInteger()');
-        //     }
-        // }
+
         if (!array_key_exists('multipleBirthInteger', $this->Patient)) {
             $this->setMultipleBirthInteger(0);
         }
